@@ -6,55 +6,28 @@ import userRouter from "./routes/userRouter.js";
 import propertyRoute from "./routes/propertyRoute.js";
 import rentRoute from "./routes/rentRoute.js";
 import requestRoute from "./routes/requestRoute.js";
+import User from "./models/userModel.js"; // Added this
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = 5000;
 
 app.use(express.json());
-
 app.use(cors({
-    origin: ["http://localhost:3000", "http://localhost:5173", "http://localhost:5178"],
+    origin: ["http://localhost:5173", "http://localhost:3000"],
     credentials: true
 }));
 
 app.use(session({
-    secret: process.env.SESSION_SECRET || "real-estate-session-secret",
+    secret: "real-estate-session-secret",
     resave: false,
     saveUninitialized: false,
-    cookie: {
-        httpOnly: true,
-        secure: false,
-        maxAge: 24 * 60 * 60 * 1000
-    }
+    cookie: { httpOnly: true, secure: false, maxAge: 24 * 60 * 60 * 1000 }
 }));
 
 function isAuthenticated(req, res, next) {
-    if (!req.session.userId) {
-        return res.status(401).json({ message: "Unauthorized. Please login first." });
-    }
+    if (!req.session.userId) return res.status(401).json({ message: "Unauthorized" });
     next();
 }
-
-app.get("/", (req, res) => {
-    res.status(200).json({ message: "Real estate API is running" });
-});
-
-app.get("/api/users/profile", isAuthenticated, async (req, res) => {
-  try {
-    const { default: User } = await import('./models/userModel.js');
-    const user = await User.findByPk(req.session.userId);
-    if (!user) {
-      return res.status(401).json({ message: "User not found" });
-    }
-    res.json({
-      username: user.username,
-      email: user.email,
-      role: user.role
-    });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
 
 app.use("/api/users", userRouter);
 app.use("/api/properties", isAuthenticated, propertyRoute);
@@ -62,11 +35,17 @@ app.use("/api/rents", isAuthenticated, rentRoute);
 app.use("/api/requests", isAuthenticated, requestRoute);
 
 async function startServer() {
-    await connectDb();
+    try {
+        await connectDb();
+        
+        // This syncs the specific User model to create the table
+        await User.sequelize.sync({ alter: true });
+        console.log("Database synced");
 
-    app.listen(PORT, () => {
-        console.log(`Server is running on port ${PORT}`);
-    });
+        app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+    } catch (error) {
+        console.error("Startup error:", error);
+    }
 }
 
 startServer();
