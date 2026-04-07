@@ -13,7 +13,7 @@ const PORT = process.env.PORT || 5000;
 app.use(express.json());
 
 app.use(cors({
-    origin: "http://localhost:3000",
+    origin: ["http://localhost:3000", "http://localhost:5173", "http://localhost:5178"],
     credentials: true
 }));
 
@@ -39,6 +39,23 @@ app.get("/", (req, res) => {
     res.status(200).json({ message: "Real estate API is running" });
 });
 
+app.get("/api/users/profile", isAuthenticated, async (req, res) => {
+  try {
+    const { default: User } = await import('./models/userModel.js');
+    const user = await User.findByPk(req.session.userId);
+    if (!user) {
+      return res.status(401).json({ message: "User not found" });
+    }
+    res.json({
+      username: user.username,
+      email: user.email,
+      role: user.role
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.use("/api/users", userRouter);
 app.use("/api/properties", isAuthenticated, propertyRoute);
 app.use("/api/rents", isAuthenticated, rentRoute);
@@ -46,6 +63,7 @@ app.use("/api/requests", isAuthenticated, requestRoute);
 
 async function startServer() {
     await connectDb();
+
     app.listen(PORT, () => {
         console.log(`Server is running on port ${PORT}`);
     });
