@@ -1,7 +1,7 @@
 import Request from "../models/rental_requestModel.js";
 import User from '../models/userModel.js'
 
-export async function registerRent(req,res){
+export async function registerRequest(req,res){
     try {
         const {tenant_id,property_id,status}=req.body;
         const findRequest= await Request.findOne({where:{tenant_id, property_id}})
@@ -10,7 +10,7 @@ export async function registerRent(req,res){
         if(!tenant) return res.status(400).json({messsage:"Tenant Doesn't exist"});
         if(tenant.role!=="tenant") return res.status(404).json("Tenant not found");
         const request= await Request.create({tenant_id,property_id,status})
-        res.status(201).json("Rent registered successfully",request)
+        res.status(201).json({message:"Rent registered successfully",request})
     } catch (error) {
         console.error("error Occured when registering rent",error)
         res.status(500).json({error:error.message})

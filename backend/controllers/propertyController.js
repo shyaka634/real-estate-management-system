@@ -11,11 +11,11 @@ export async function registerproperty(req,res){
         if(!landlord) return res.status(400).json({message:"User not found"});
         if(landlord.role!== "landlord") return res.status(404).json({message:"user not found"})
         const property= await Property.create({title, location,price,landlord_id})
-        res.status(201).json("Property registered successfully",property)
+        res.status(201).json({message:"Property registered successfully",property})
        
     } catch (error) {
         console.error("Error Occured when registering property",error)
-        res.status(500).json({error:message.error})
+        res.status(500).json({error:error.message})
     }
 }
 

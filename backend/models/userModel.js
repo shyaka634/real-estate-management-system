@@ -1,6 +1,11 @@
 import sequelize from "../config/db.js";
 import { DataTypes } from "sequelize";
 const user= sequelize.define("User",{
+    user_id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  },
     username:{
         type:DataTypes.STRING,
         unique:true,

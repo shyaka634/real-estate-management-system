@@ -11,7 +11,7 @@ export async function registerUser(req,res){
 
         res.status(201).json({message:"User created successfully"});
     } catch (error) {
-        res.error("error Occured when registering user",error)
+        console.error("error Occured when registering user",error)
         res.status(500).json({error:error.message});
     }
 }
@@ -32,7 +32,7 @@ export async function loginUser(req,res){
                 }});
     } catch (error) {
         console.error("Error occured when logingIn user",error);
-        req.status(500).json({error:error.message})
+        res.status(500).json({error:error.message})
     }
 }
 

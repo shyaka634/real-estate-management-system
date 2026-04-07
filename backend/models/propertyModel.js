@@ -3,6 +3,11 @@ import { DataTypes } from "sequelize";
 import user from "./userModel.js"; // Import the user model
 
 const property = sequelize.define("Property", {
+    property_id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  },
     title: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -25,7 +30,7 @@ const property = sequelize.define("Property", {
         onDelete: "CASCADE",
         onUpdate: "CASCADE"
     }
-}, { tableName: "property", timestamps: true });
+}, { tableName: "property", timestamps: false });
 
 // Association: Property belongsTo User (landlord)
 property.belongsTo(user, { foreignKey: "landlord_id", as: "landlord", onDelete: "CASCADE", onUpdate: "CASCADE" });

@@ -3,13 +3,13 @@ import {
     deleteRequest,
     getAllRequests,
     getRequestById,
-    registerRent,
+    registerRequest,
     updateRequest
 } from "../controllers/requestController.js";
 
 const router = express.Router();
 
-router.post("/", registerRent);
+router.post("/", registerRequest);
 router.get("/", getAllRequests);
 router.get("/:request_id", getRequestById);
 router.put("/:request_id", updateRequest);

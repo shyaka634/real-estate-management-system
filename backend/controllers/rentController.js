@@ -10,7 +10,7 @@ export async function registerRent(req,res){
         if(!tenant) return res.status(400).json({messsage:"Tenant Doesn't exist"});
         if(tenant.role!=="tenant") return res.status(404).json("Tenant not found");
         const rent= await Rent.create({tenant_id,property_id,startDate})
-        res.status(201).json("Rent registered successfully",rent)
+        res.status(201).json({message:"Rent registered successfully",rent})
     } catch (error) {
         console.error("error Occured when registering rent",error)
         res.status(500).json({error:error.message})

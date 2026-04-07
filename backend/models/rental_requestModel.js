@@ -2,6 +2,11 @@ import sequelize from "../config/db.js";
 import { DataTypes } from "sequelize";
 import property from "./propertyModel.js";
 const rental_request= sequelize.define("Request",{
+    request_id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  },
     tenant_id:{
         type:DataTypes.INTEGER,
         allowNull:false,
@@ -29,6 +34,6 @@ const rental_request= sequelize.define("Request",{
      
 
     }
-},{tableName:property, timestamps:true})
+},{tableName:"rental_request", timestamps:false})
 
 export default rental_request;
